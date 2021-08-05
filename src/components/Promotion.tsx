@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import { connect } from 'react-redux'
 import {
   GET_PROMOTIONS_REQUESTED,
   DELETE_PROMOTION_REQUESTED
@@ -9,44 +8,43 @@ import AddIcon from '@material-ui/icons/Add';
 import { makeStyles } from '@material-ui/core/styles';
 import PromotionItem from './PromotionItem'
 import moment from 'moment'
-import { Dispatch } from 'redux'
 import { useHistory } from "react-router-dom";
+import { useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   grid: {
     padding: '20px',
   },
 }));
 
-const PromotionComponent = ({
-  promotions: { loading, promotions },
-  getPromotions,
-  deletePromotion
-}: {
-  promotions: { loading: boolean, promotions: Promotion[] },
-  getPromotions: () => void,
-  deletePromotion: (payload: Promotion) => void
-}) => {
+const PromotionComponent = (): JSX.Element => {
 
+  const dispatch = useDispatch()
+  const { loading, promotions } = useSelector((state: ReduxState) => state.promotion)
   const [time, setTime] = useState(moment());
   const history = useHistory();
   const classes = useStyles();
 
   useEffect(() => {
-    getPromotions()
+    dispatch({ type: GET_PROMOTIONS_REQUESTED })
   }, [])
 
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setTime(moment());
-      getPromotions();
+      dispatch({ type: GET_PROMOTIONS_REQUESTED })
     }, 1000);
     return () => clearTimeout(timer);
   });
 
   function handleNavigation(path: string) {
     history.push(path);
+  }
+
+  const deletePromotion = (payload: Promotion) => {
+    dispatch({ type: DELETE_PROMOTION_REQUESTED, payload: payload })
   }
 
   return (
@@ -87,13 +85,4 @@ const PromotionComponent = ({
   )
 }
 
-const mapStateToProps = (state: ReduxState) => ({
-  promotions: state.promotion
-})
-
-const mapDispatchToProps = (dispatch: Dispatch) => ({
-  getPromotions: () => dispatch({ type: GET_PROMOTIONS_REQUESTED }),
-  deletePromotion: (payload: Promotion) => dispatch({ type: DELETE_PROMOTION_REQUESTED, payload })
-})
-
-export default connect(mapStateToProps, mapDispatchToProps)(PromotionComponent)
+export default PromotionComponent

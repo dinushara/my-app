@@ -1,6 +1,6 @@
 import React from 'react';
-import './App.css';
 import { ToastContainer } from 'react-toastify'
+import './styles/App.css';
 import 'react-toastify/dist/ReactToastify.css';
 import { makeStyles, useTheme, Theme, createStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
@@ -25,9 +25,9 @@ import AddIcon from '@material-ui/icons/Add';
 import {
   BrowserRouter as Router,
   Switch,
-  Route
+  Route,
+  Link
 } from "react-router-dom";
-import { useHistory } from "react-router-dom";
 
 const drawerWidth = 240;
 const useStyles = makeStyles((theme: Theme) =>
@@ -89,11 +89,10 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-const App = ():JSX.Element => {
+const App = (): JSX.Element => {
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
-  const history = useHistory();
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -103,68 +102,68 @@ const App = ():JSX.Element => {
     setOpen(false);
   };
 
-  function handleNavigation(path: string) {
-    history.push(path);
-  }
-
   return (
     <div className="App">
       <div className={classes.root}>
-        <CssBaseline />
-        <AppBar
-          position="fixed"
-          className={clsx(classes.appBar, {
-            [classes.appBarShift]: open,
-          })}
-        >
-          <Toolbar>
-            <IconButton
-              color="inherit"
-              aria-label="open drawer"
-              onClick={handleDrawerOpen}
-              edge="start"
-              className={clsx(classes.menuButton, open && classes.hide)}
-            >
-              <MenuIcon />
-            </IconButton>
-            <Typography variant="h6" noWrap>
-              Persistent drawer
-            </Typography>
-          </Toolbar>
-        </AppBar>
-        <Drawer
-          className={classes.drawer}
-          variant="persistent"
-          anchor="left"
-          open={open}
-          classes={{
-            paper: classes.drawerPaper,
-          }}
-        >
-          <div className={classes.drawerHeader}>
-            <IconButton onClick={handleDrawerClose}>
-              {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-            </IconButton>
-          </div>
-          <Divider />
-          <List>
-            <ListItem button key={'list'} onClick={() => handleNavigation('/')}>
-              <ListItemIcon><FormatListBulletedIcon /></ListItemIcon>
-              <ListItemText primary={'List'} />
-            </ListItem>
-            <ListItem button key={'create'} onClick={() => handleNavigation('/add')}>
-              <ListItemIcon><AddIcon /></ListItemIcon>
-              <ListItemText primary={'Create new'} />
-            </ListItem>
-          </List>
-        </Drawer>
-        <main
-          className={clsx(classes.content, {
-            [classes.contentShift]: open,
-          })}
-        >
-          <div className={classes.drawerHeader} />
-          <Router>
+        <Router>
+          <CssBaseline />
+          <AppBar
+            position="fixed"
+            className={clsx(classes.appBar, {
+              [classes.appBarShift]: open,
+            })}
+          >
+            <Toolbar>
+              <IconButton
+                color="inherit"
+                aria-label="open drawer"
+                onClick={handleDrawerOpen}
+                edge="start"
+                className={clsx(classes.menuButton, open && classes.hide)}
+              >
+                <MenuIcon />
+              </IconButton>
+              <Typography variant="h6" noWrap>
+                My Promotion App
+              </Typography>
+            </Toolbar>
+          </AppBar>
+          <Drawer
+            className={classes.drawer}
+            variant="persistent"
+            anchor="left"
+            open={open}
+            classes={{
+              paper: classes.drawerPaper,
+            }}
+          >
+            <div className={classes.drawerHeader}>
+              <IconButton onClick={handleDrawerClose}>
+                {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+              </IconButton>
+            </div>
+            <Divider />
+            <List>
+              <Link to="/">
+                <ListItem button key={'list'}>
+                  <ListItemIcon><FormatListBulletedIcon /></ListItemIcon>
+                  <ListItemText primary={'List'} />
+                </ListItem>
+              </Link>
+              <Link to="/add">
+                <ListItem button key={'create'}>
+                  <ListItemIcon><AddIcon /></ListItemIcon>
+                  <ListItemText primary={'Create new'} />
+                </ListItem>
+              </Link>
+            </List>
+          </Drawer>
+          <main
+            className={clsx(classes.content, {
+              [classes.contentShift]: open,
+            })}
+          >
+            <div className={classes.drawerHeader} />
             <Switch>
               <Route path="/add">
                 <PromotionForm />
@@ -173,8 +172,8 @@ const App = ():JSX.Element => {
                 <PromotionList />
               </Route>
             </Switch>
-          </Router>
-        </main>
+          </main>
+        </Router>
       </div>
 
       <ToastContainer

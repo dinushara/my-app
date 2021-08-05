@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import _ from 'lodash';
-import { connect } from 'react-redux'
 import { makeStyles } from '@material-ui/core/styles';
 import {
   CREATE_PROMOTION_REQUESTED
@@ -8,6 +7,8 @@ import {
 import { TextField, Grid, Button } from '@material-ui/core';
 import moment from 'moment';
 import { toast } from 'react-toastify';
+import { useDispatch } from 'react-redux'
+import { Link } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   textField: {
@@ -19,15 +20,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const PromotionForm = ({
-  createPromotion
-}: {
-  createPromotion: (promotion: Promotion) => Promotion
-}) => {
+const PromotionForm = (): JSX.Element => {
+
+  const dispatch = useDispatch()
   const initialFormDate = {
     id: 0,
     title: '',
-    endDate:''
+    endDate: ''
   };
 
   const classes = useStyles();
@@ -43,7 +42,7 @@ const PromotionForm = ({
     e.preventDefault()
     const def = moment(formData.endDate).diff(moment(), 'seconds');
     if (def > 0) {
-      createPromotion({ ...formData, id: _.uniqueId() })
+      dispatch({ type: CREATE_PROMOTION_REQUESTED, payload: { ...formData, id: _.uniqueId() } })
       setFromData(initialFormDate)
     } else {
       toast.error("Please select a future Date");
@@ -95,18 +94,15 @@ const PromotionForm = ({
             type="submit">
             Submit
           </Button>
+          <div className="App-link">
+            <Link to="/">
+              Go back to list
+            </Link>
+          </div>
         </Grid>
       </form>
     </Grid>
   )
 }
 
-const mapStateToProps = (state: ReduxState) => ({
-  promotions: state.promotion
-})
-
-const mapDispatchToProps = (dispatch: any) => ({
-  createPromotion: (promotion: Promotion) => dispatch({ type: CREATE_PROMOTION_REQUESTED, payload: promotion }),
-})
-
-export default connect(mapStateToProps, mapDispatchToProps)(PromotionForm)
+export default PromotionForm
